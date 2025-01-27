@@ -1,3 +1,0 @@
-// user schema
-
-// Virtual fields
