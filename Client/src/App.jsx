@@ -1,10 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Authentication/Login";
-import Dashboard from "./landing";
+// import Dashboard from "./landing";
 import Register from "./Authentication/Register";
-import Home from "./Home/home";
-import Product from "./Home/Product";
+import Dashboard from "./Farmer/Dashboard";
+import Product from "./Farmer/Product";
+import Order from "./Farmer/Order";
+import Message from "./pages/Message";
+import Settings from "./Farmer/Settings";
 
 const App = () => {
   return (
@@ -14,8 +17,11 @@ const App = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" element={<Dashboard />} />
           <Route path="/product" element={<Product />} />
+          <Route path="/orders" element={<Order />} />
+          <Route path="/messages" element={<Message />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
     </Router>

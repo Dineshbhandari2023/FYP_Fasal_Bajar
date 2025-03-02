@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import logo from "../Assets/auth_logo.png";
+import logo from "../Assets/images/auth_logo.png";
 
 const Register = () => {
   const [formData, setFormData] = useState({

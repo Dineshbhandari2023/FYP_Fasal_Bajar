@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import logo from "../Assets/auth_logo.png";
+import logo from "../Assets/images/auth_logo.png";
 import { login } from "../Redux/slice/authstore.js";
 
 const Login = () => {

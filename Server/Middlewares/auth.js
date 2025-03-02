@@ -1,6 +1,6 @@
 const { verify } = require("../Util/jwt");
 const User = require("../Models/user");
-const ErrorResponse = require("../Util/errorResponse");
+const ErrorResponse = require("../Util/ErrorResponse");
 
 exports.protect = async (req, res, next) => {
   try {
