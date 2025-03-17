@@ -1,0 +1,36 @@
+const express = require("express");
+const router = express.Router();
+const productController = require("../Controllers/productController");
+const { authenticateToken } = require("../Util/auth");
+const upload = require("../middlewares/multerConfig");
+
+// GET all products (public route)
+router.get("/product", productController.getAllProducts);
+
+// GET a single product by ID (public route)
+router.get("/product/:id", productController.getProductById);
+
+// CREATE a new product (protected & image upload)
+router.post(
+  "/product",
+  authenticateToken,
+  upload.single("image"),
+  productController.createProduct
+);
+
+// UPDATE a product by ID (protected & image upload)
+router.put(
+  "/product/:id",
+  authenticateToken,
+  upload.single("image"),
+  productController.updateProduct
+);
+
+// DELETE a product by ID (protected route)
+router.delete(
+  "/product/:id",
+  authenticateToken,
+  productController.deleteProduct
+);
+
+module.exports = router;
