@@ -26,7 +26,6 @@ router.post("/login", loginUser);
 router.post("/forgot-password", forgotPassword);
 router.post("/verify-reset-code", verifyResetCode);
 router.post("/reset-password", resetPassword);
-router.get("/farmers", getAllFarmers);
 
 // Protected routes (requires token)
 router.get("/", authMiddleWare, getAllUsers);
@@ -34,5 +33,6 @@ router.get("/me", authMiddleWare, getCurrentUser);
 router.get("/:id", authMiddleWare, getUserById);
 router.put("/", authMiddleWare, updateUser);
 router.post("/logout", authMiddleWare, handleLogout);
+router.get("/farmers", authMiddleWare, getAllFarmers);
 
 module.exports = router;

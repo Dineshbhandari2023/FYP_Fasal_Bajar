@@ -486,13 +486,20 @@ const updateUser = async (req, res, next) => {
 };
 
 // Get all farmers with pagination
-// Get all farmers with full details (no pagination)
 const getAllFarmers = async (req, res, next) => {
+  // Parse pagination parameters (default page 1 and limit 10)
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
   try {
-    const farmers = await User.findAll({
+    const { count, rows } = await User.findAndCountAll({
       where: { role: "Farmer" },
+      offset,
+      limit,
       attributes: { exclude: ["password"] },
     });
+    const totalPages = Math.ceil(count / limit);
 
     res.status(200).json({
       StatusCode: 200,
@@ -500,7 +507,13 @@ const getAllFarmers = async (req, res, next) => {
       ErrorMessage: [],
       Result: {
         message: "Farmers fetched successfully",
-        data: farmers,
+        data: rows,
+        pagination: {
+          totalFarmers: count,
+          totalPages,
+          currentPage: page,
+          pageSize: rows.length,
+        },
       },
     });
   } catch (error) {
