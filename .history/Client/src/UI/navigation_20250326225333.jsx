@@ -3,7 +3,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Menu, Search, ShoppingCart, X, Leaf } from "lucide-react";
+import { Menu, Search, ShoppingCart, X, Leaf, MapPin } from "lucide-react";
 import { logoutUser } from "../Redux/slice/userSlice"; // Adjust the import path as needed
 
 export function Navigation() {

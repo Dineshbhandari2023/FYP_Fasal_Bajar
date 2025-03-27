@@ -3,7 +3,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Menu, Search, ShoppingCart, X, Leaf } from "lucide-react";
+import { Menu, Search, ShoppingCart, X, Leaf, MapPin } from "lucide-react";
 import { logoutUser } from "../Redux/slice/userSlice"; // Adjust the import path as needed
 
 export function Navigation() {
@@ -79,6 +79,7 @@ export function Navigation() {
               to="/map"
               className="relative py-2 transition-colors hover:text-green-600 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-green-600 after:transition-all hover:after:w-full flex items-center"
             >
+              <MapPin className="h-4 w-4 mr-1" />
               Farmer Map
             </Link>
           </nav>
@@ -181,6 +182,7 @@ export function Navigation() {
                 className="flex items-center py-2 text-gray-800 hover:text-green-600 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
+                <MapPin className="h-4 w-4 mr-2" />
                 Farmer Map
               </Link>
               <div className="h-px bg-gray-200 my-2"></div>
