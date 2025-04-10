@@ -508,11 +508,9 @@ const Message = () => {
             activeMessages.length > 0 ? (
               <div className="space-y-4">
                 {activeMessages.map((msg, index) => {
-                  // Convert IDs to numbers to ensure consistent comparison
                   const senderId = Number(
                     msg.senderId || (msg.sender && msg.sender.id)
                   );
-                  // Check if the message is from the current user
                   const isCurrentUser = senderId === currentUserId;
 
                   return (
