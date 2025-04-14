@@ -202,8 +202,6 @@
 
 const createError = require("http-errors");
 const Product = require("../Models/products");
-// const cloudinary = require("cloudinary").v2;
-// const { uploadToCloudinary, getFilePath } = require("../Util/uploadFile");
 
 const createProduct = async (req, res, next) => {
   try {

@@ -202,50 +202,37 @@
 
 const createError = require("http-errors");
 const Product = require("../Models/products");
-const cloudinary = require("cloudinary").v2;
-const { uploadToCloudinary, getFilePath } = require("../Util/uploadFile");
 
 const createProduct = async (req, res, next) => {
   try {
     const { productName, productType, quantity, price, location } = req.body;
 
-    // Validate mandatory fields...
+    // Validate mandatory fields
     if (!productName || !productType || !quantity || !price || !location) {
       return next(createError(400, "All fields are required."));
     }
 
-    // Optional: userId from your token-based auth
+    // Get userId from your token-based authentication
     const userId = req.user && (req.user.id || req.user.sub);
     if (!userId) {
       return next(createError(401, "User not authenticated"));
     }
 
-    // If there's a file, upload it and store both URL and publicId
+    // If a file was uploaded, store its path
     let imageUrl = "";
-    let imagePublicId = "";
     if (req.file) {
-      const imagePath = getFilePath(req.file.filename); // local path
-      const imageMimeType = req.file.mimetype.split("/").pop();
-      const result = await uploadToCloudinary(
-        imagePath,
-        "products-images", // your folder name in Cloudinary
-        req.file.filename,
-        imageMimeType
-      );
-      imageUrl = result.secure_url;
-      imagePublicId = result.public_id;
+      imageUrl = `uploads/${req.file.filename}`;
     }
 
-    // Create product in DB
+    // Create product in the database
     const newProduct = await Product.create({
       productName,
       productType,
       quantity,
       price,
       location,
-      userId, // the user who created it
+      userId, // The user who created it
       image: imageUrl,
-      imagePublicId,
     });
 
     res.status(201).json({
@@ -264,6 +251,7 @@ const createProduct = async (req, res, next) => {
   }
 };
 
+// Get all products
 const getAllProducts = async (req, res, next) => {
   try {
     const products = await Product.findAll();
@@ -272,9 +260,7 @@ const getAllProducts = async (req, res, next) => {
       StatusCode: 200,
       IsSuccess: true,
       ErrorMessage: [],
-      Result: {
-        productData: products,
-      },
+      Result: { productData: products },
     });
   } catch (error) {
     next(
@@ -283,15 +269,14 @@ const getAllProducts = async (req, res, next) => {
   }
 };
 
+// Get a single product by ID
 const getProductById = async (req, res, next) => {
   const { id } = req.params;
-
   try {
     const product = await Product.findByPk(id);
     if (!product) {
       return next(createError(404, "Product not found"));
     }
-
     res.status(200).json({
       StatusCode: 200,
       IsSuccess: true,
@@ -308,36 +293,20 @@ const getProductById = async (req, res, next) => {
   }
 };
 
+// Update a product (if a new image is uploaded, update the stored file path)
 const updateProduct = async (req, res, next) => {
   const { id } = req.params;
   const { productName, productType, quantity, price, location } = req.body;
-
   try {
     const product = await Product.findByPk(id);
     if (!product) {
       return next(createError(404, "Product not found"));
     }
 
-    // Retain the current image info
+    // Retain the current image path; if a new file is uploaded, update it
     let imageUrl = product.image;
-    let imagePublicId = product.imagePublicId;
     if (req.file) {
-      // Delete the old image from Cloudinary if available
-      if (imagePublicId) {
-        await cloudinary.uploader.destroy(imagePublicId, {
-          resource_type: "image",
-        });
-      }
-      const imagePath = getFilePath(req.file.filename);
-      const imageMimeType = req.file.mimetype.split("/").pop();
-      const result = await uploadToCloudinary(
-        imagePath,
-        "products-images",
-        req.file.filename,
-        imageMimeType
-      );
-      imageUrl = result.secure_url;
-      imagePublicId = result.public_id;
+      imageUrl = `uploads/${req.file.filename}`;
     }
 
     await product.update({
@@ -347,7 +316,6 @@ const updateProduct = async (req, res, next) => {
       price,
       location,
       image: imageUrl,
-      imagePublicId,
     });
 
     res.status(200).json({
@@ -366,22 +334,14 @@ const updateProduct = async (req, res, next) => {
   }
 };
 
+// Delete a product
 const deleteProduct = async (req, res, next) => {
   const { id } = req.params;
-
   try {
     const product = await Product.findByPk(id);
     if (!product) {
       return next(createError(404, "Product not found"));
     }
-
-    // Delete the image from Cloudinary if available
-    if (product.imagePublicId) {
-      await cloudinary.uploader.destroy(product.imagePublicId, {
-        resource_type: "image",
-      });
-    }
-
     await product.destroy();
 
     res.status(200).json({
@@ -397,10 +357,30 @@ const deleteProduct = async (req, res, next) => {
   }
 };
 
+const getMyProducts = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const products = await Product.findAll({ where: { userId } });
+    return res.status(200).json({
+      StatusCode: 200,
+      IsSuccess: true,
+      ErrorMessage: [],
+      Result: { productData: products },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      StatusCode: 500,
+      IsSuccess: false,
+      ErrorMessage: error.message,
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
   getProductById,
   updateProduct,
   deleteProduct,
+  getMyProducts,
 };
