@@ -40,16 +40,19 @@ import SupplierMapPage from "./supplier/Tabs/MapPage";
 const App = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    const storedUser = localStorage.getItem("user");
+  // useEffect(() => {
+  //   const token = localStorage.getItem("accessToken");
+  //   const storedUser = localStorage.getItem("user");
 
-    if (token && storedUser) {
-      dispatch(login({ token, user: JSON.parse(storedUser) }));
-    } else {
-      dispatch(logout());
-    }
-  }, [dispatch]);
+  //   if (token && storedUser) {
+  //     dispatch(login({ token, user: JSON.parse(storedUser) }));
+  //   } else {
+  //     dispatch(logout());
+  //   }
+  // }, [dispatch]);
+  useEffect(() => {
+    dispatch({ type: "user/setAuthChecked", payload: true });
+  }, []);
 
   return (
     <Router>

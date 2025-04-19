@@ -20,20 +20,39 @@ import SellPage from "./sell/page";
 import OrdersPage from "./orders/page";
 import ProfilePage from "./profile/page";
 import CartPage from "./cart/page";
+import Map from "./map/page";
+import Success from "./payment/success";
+import Failure from "./payment/paymentFailure";
+import PaymentComponent from "./payment/paymentForm";
+import FarmerProfile from "./map/farmerProfile";
+import MessagesPage from "./chat/messages";
+//supplier imports
+// import SupplierDashboardPage from "./supplier/pages/DashboardPage";
+import SupplierDashboardPage from "./supplier/Tabs/DashboardPage";
+import SupplierProfilePage from "./supplier/pages/ProfilePage";
+// import SupplierMessagesPage from "./supplier/pages/MessagesPage";
+import AnalyticsPage from "./supplier/Tabs/AnalyticsPage";
+import DeliveriesPage from "./supplier/Tabs/DeliveriesPage";
+import SupplierOrdersPage from "./supplier/Tabs/OrdersPage";
+import SupplierMessagesPage from "./supplier/Tabs/MessagesPage";
+import SupplierMapPage from "./supplier/Tabs/MapPage";
 
 const App = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    const storedUser = localStorage.getItem("user");
+  // useEffect(() => {
+  //   const token = localStorage.getItem("accessToken");
+  //   const storedUser = localStorage.getItem("user");
 
-    if (token && storedUser) {
-      dispatch(login({ token, user: JSON.parse(storedUser) }));
-    } else {
-      dispatch(logout());
-    }
-  }, [dispatch]);
+  //   if (token && storedUser) {
+  //     dispatch(login({ token, user: JSON.parse(storedUser) }));
+  //   } else {
+  //     dispatch(logout());
+  //   }
+  // }, [dispatch]);
+  useEffect(() => {
+    dispatch({ type: "user/setAuthChecked", payload: true });
+  }, []);
 
   return (
     <Router>
@@ -70,7 +89,7 @@ const App = () => {
           }
         />
         <Route
-          path="/messages"
+          path="/farmer/messages"
           element={
             <ProtectedRoute>
               <Message />
@@ -108,6 +127,32 @@ const App = () => {
           element={
             <ProtectedRoute>
               <BrowsePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/map"
+          element={
+            <ProtectedRoute>
+              <Map />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <MessagesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/farmer/:id"
+          element={
+            <ProtectedRoute>
+              <FarmerProfile />
             </ProtectedRoute>
           }
         />
@@ -151,6 +196,85 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/supplier/dashboard"
+          element={
+            <ProtectedRoute>
+              <SupplierDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/supplier/profile"
+          element={
+            <ProtectedRoute>
+              <SupplierProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/supplier/orders"
+          element={
+            <ProtectedRoute>
+              <SupplierOrdersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/supplier/deliveries"
+          element={
+            <ProtectedRoute>
+              <DeliveriesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/supplier/map"
+          element={
+            <ProtectedRoute>
+              <SupplierMapPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/supplier/messages"
+          element={
+            <ProtectedRoute>
+              <SupplierMessagesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/supplier/analytics"
+          element={
+            <ProtectedRoute>
+              <AnalyticsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/supplier/settings"
+          element={
+            <ProtectedRoute>
+              <SupplierDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/supplier/help"
+          element={
+            <ProtectedRoute>
+              <SupplierDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/payment-success" element={<Success />} />
+        <Route path="/payment-failure" element={<Failure />} />
+        <Route path="/payment-form" element={<PaymentComponent />} />
       </Routes>
     </Router>
   );

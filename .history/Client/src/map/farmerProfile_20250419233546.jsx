@@ -15,7 +15,6 @@ import Navigation from "../UI/navigation";
 import { StartChatButton } from "../chat/startChatButton";
 import socketService from "../services/socketService";
 import {
-  submitReview,
   fetchFarmerReviews,
   fetchFarmerRating,
   updateReview,
@@ -36,7 +35,7 @@ const FarmerProfile = () => {
   console.log("Redux state structure:", reduxState);
 
   // FIXED: Get userInfo instead of currentUser from Redux state
-  const { userInfo, accessToken } = useSelector((state) => state.user || {});
+  const { userInfo, accessToken } = useSelector((state) => state.auth || {});
   console.log("User info:", userInfo); // Debug user info
   console.log("Access token:", accessToken ? "Present" : "Missing"); // Debug token
 
