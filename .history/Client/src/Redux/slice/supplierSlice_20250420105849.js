@@ -25,20 +25,23 @@ export const getSupplierDetails = createAsyncThunk(
       const token = getAuthToken();
       if (!token) throw new Error("Authentication required");
 
-      const { data } = await axios.get(`${API_URL}/api/supplier/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await axios.get(`${API_URL}/api/supplier/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      // data.Result.data is the full userData { ..., SupplierDetail, deliveryStats }
-      return data.Result.data;
+
+      return response.data.Result.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.ErrorMessage || error.message
+        error.response?.data?.ErrorMessage ||
+          error.message ||
+          "Failed to fetch supplier details"
       );
     }
   }
 );
 
-// Registers new SupplierDetails
 export const registerSupplierDetails = createAsyncThunk(
   "supplier/register",
   async (formData, { rejectWithValue }) => {
@@ -46,7 +49,7 @@ export const registerSupplierDetails = createAsyncThunk(
       const token = getAuthToken();
       if (!token) throw new Error("Authentication required");
 
-      const { data } = await axios.post(
+      const response = await axios.post(
         `${API_URL}/api/supplier/register`,
         formData,
         {
@@ -56,17 +59,18 @@ export const registerSupplierDetails = createAsyncThunk(
           },
         }
       );
-      // data.Result.data is the newly-created SupplierDetails record
-      return data.Result.data;
+
+      return response.data.Result.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.ErrorMessage || error.message
+        error.response?.data?.ErrorMessage ||
+          error.message ||
+          "Failed to register supplier details"
       );
     }
   }
 );
 
-// Updates existing SupplierDetails
 export const updateSupplierDetails = createAsyncThunk(
   "supplier/update",
   async (formData, { rejectWithValue }) => {
@@ -74,7 +78,7 @@ export const updateSupplierDetails = createAsyncThunk(
       const token = getAuthToken();
       if (!token) throw new Error("Authentication required");
 
-      const { data } = await axios.put(
+      const response = await axios.put(
         `${API_URL}/api/supplier/update`,
         formData,
         {
@@ -84,10 +88,13 @@ export const updateSupplierDetails = createAsyncThunk(
           },
         }
       );
-      return data.Result.data;
+
+      return response.data.Result.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.ErrorMessage || error.message
+        error.response?.data?.ErrorMessage ||
+          error.message ||
+          "Failed to update supplier details"
       );
     }
   }
@@ -311,15 +318,14 @@ const supplierSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(getSupplierDetails.fulfilled, (state, { payload }) => {
+      .addCase(getSupplierDetails.fulfilled, (state, action) => {
         state.loading = false;
-        // pull only the SupplierDetail out of the userData
-        state.supplierDetails = payload.SupplierDetail;
+        state.supplierDetails = action.payload.SupplierDetail;
         state.success = true;
       })
-      .addCase(getSupplierDetails.rejected, (state, { payload }) => {
+      .addCase(getSupplierDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = payload;
+        state.error = action.payload;
       })
 
       // Register supplier
@@ -327,15 +333,15 @@ const supplierSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(registerSupplierDetails.fulfilled, (state, { payload }) => {
+      .addCase(registerSupplierDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.supplierDetails = payload; // now a real object
+        state.supplierDetails = action.payload;
         state.success = true;
         state.message = "Supplier profile registered successfully";
       })
-      .addCase(registerSupplierDetails.rejected, (state, { payload }) => {
+      .addCase(registerSupplierDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = payload;
+        state.error = action.payload;
       })
 
       // Update supplier details
@@ -343,15 +349,15 @@ const supplierSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateSupplierDetails.fulfilled, (state, { payload }) => {
+      .addCase(updateSupplierDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.supplierDetails = payload;
+        state.supplierDetails = action.payload;
         state.success = true;
         state.message = "Supplier profile updated successfully";
       })
-      .addCase(updateSupplierDetails.rejected, (state, { payload }) => {
+      .addCase(updateSupplierDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = payload;
+        state.error = action.payload;
       })
 
       // Update location

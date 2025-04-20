@@ -189,18 +189,17 @@ const ProfilePage = () => {
 
   const toggleEditMode = () => {
     if (isEditing && supplierDetails) {
-      // reset form back to saved
-      setFormData({
-        vehicleType: supplierDetails.vehicleType,
-        vehicleRegistration: supplierDetails.vehicleRegistration,
-        vehicleCapacity: supplierDetails.vehicleCapacity,
-        serviceArea: supplierDetails.serviceArea,
-        experience: supplierDetails.experience,
-        licenseNumber: supplierDetails.licenseNumber,
-        bio: supplierDetails.bio,
-        licenseDocument: supplierDetails.licenseDocument,
-      });
-      setLicenseFile(null);
+        setFormData({
+          vehicleType: supplierDetails.vehicleType || "",
+          vehicleRegistration: supplierDetails.vehicleRegistration || "",
+          vehicleCapacity: supplierDetails.vehicleCapacity || "",
+          serviceArea: supplierDetails.serviceArea || "",
+          experience: supplierDetails.experience || "",
+          licenseNumber: supplierDetails.licenseNumber || "",
+          bio: supplierDetails.bio || "",
+          licenseDocument: supplierDetails.licenseDocument || "",
+        });
+      }
     }
     setIsEditing(!isEditing);
     setErrorMessage("");

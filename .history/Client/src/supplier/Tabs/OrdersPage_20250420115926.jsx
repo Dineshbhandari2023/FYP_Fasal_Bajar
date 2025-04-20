@@ -303,9 +303,8 @@
 // OrdersPage.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAvailableDeliveries } from "../../Redux/slice/supplierSlice";
+import { getAvailableDeliveries } from "../store/supplierSlice";
 import { SupplierLayout } from "../SupplierLayout";
-import { useNavigate } from "react-router-dom";
 import {
   Package,
   Truck,
@@ -346,8 +345,6 @@ const statusConfig = {
 
 export default function SupplierOrdersPage() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   const { availableDeliveries, loading, error } = useSelector(
     (s) => s.supplier
   );
@@ -498,18 +495,10 @@ export default function SupplierOrdersPage() {
                 </div>
 
                 <footer className="mt-4 flex gap-2">
-                  <button
-                    onClick={() => navigate(`/supplier/messages/${d.buyer.id}`)}
-                    className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
+                  <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
                     Message Buyer
                   </button>
-                  <button
-                    onClick={() =>
-                      navigate(`/supplier/messages/${d.farmer.id}`)
-                    }
-                    className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                  >
+                  <button className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">
                     Message Farmer
                   </button>
                 </footer>

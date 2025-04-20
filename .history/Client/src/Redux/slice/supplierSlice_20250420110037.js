@@ -353,7 +353,6 @@ const supplierSlice = createSlice({
         state.loading = false;
         state.error = payload;
       })
-
       // Update location
       .addCase(updateCurrentLocation.pending, (state) => {
         state.loading = true;

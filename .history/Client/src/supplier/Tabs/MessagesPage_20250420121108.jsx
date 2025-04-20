@@ -9,7 +9,7 @@ import {
   markMessagesAsRead,
   addNewMessage,
 } from "../../Redux/slice/messageSlice";
-import socket from "../../sockets/messageSocket";
+import socket from "../../utils/messageSocket";
 import { SupplierLayout } from "../SupplierLayout";
 import {
   Phone,

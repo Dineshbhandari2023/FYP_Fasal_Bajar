@@ -1,7 +1,5 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Truck,
@@ -9,20 +7,21 @@ import {
   Package,
   MessageSquare,
   Bell,
+  Settings,
   User,
   LogOut,
   Map,
+  HelpCircle,
   BarChart3,
   Menu,
 } from "lucide-react";
-import { fetchCurrentUser, logoutUser } from "../Redux/slice/userSlice";
+import { fetchCurrentUser } from "../Redux/slice/userSlice";
 import { Logo } from "./logo";
 
 export function SupplierLayout({ children, profileComplete = true }) {
   const location = useLocation();
   const pathname = location.pathname;
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -37,45 +36,21 @@ export function SupplierLayout({ children, profileComplete = true }) {
 
   if (!mounted) return null;
 
-  // Handle logout function
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    await dispatch(logoutUser());
-    navigate("/login");
-  };
-
-  const NavItem = ({ to, icon: Icon, label, isActive, onClick }) => {
-    // If onClick is provided, use it instead of Link
-    if (onClick) {
-      return (
-        <li className="mb-1">
-          <button
-            onClick={onClick}
-            className={`flex w-full items-center gap-2 px-4 py-2 rounded-md text-left hover:bg-gray-100`}
-          >
-            <Icon className="h-5 w-5" />
-            {sidebarOpen && <span>{label}</span>}
-          </button>
-        </li>
-      );
-    }
-
-    return (
-      <li className="mb-1">
-        <Link
-          to={to}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md ${
-            isActive
-              ? "bg-green-100 text-green-700 font-medium"
-              : "hover:bg-gray-100"
-          }`}
-        >
-          <Icon className="h-5 w-5" />
-          {sidebarOpen && <span>{label}</span>}
-        </Link>
-      </li>
-    );
-  };
+  const NavItem = ({ to, icon: Icon, label, isActive }) => (
+    <li className="mb-1">
+      <Link
+        to={to}
+        className={`flex items-center gap-2 px-4 py-2 rounded-md ${
+          isActive
+            ? "bg-green-100 text-green-700 font-medium"
+            : "hover:bg-gray-100"
+        }`}
+      >
+        <Icon className="h-5 w-5" />
+        {sidebarOpen && <span>{label}</span>}
+      </Link>
+    </li>
+  );
 
   // If profile is not complete, only allow profile page
   if (!profileComplete && pathname !== "/profile") {
@@ -159,7 +134,13 @@ export function SupplierLayout({ children, profileComplete = true }) {
                 label="Profile"
                 isActive={pathname === "/supplier/profile"}
               />
-              <NavItem icon={LogOut} label="Logout" onClick={handleLogout} />
+
+              <NavItem
+                to="/logout"
+                icon={LogOut}
+                label="Logout"
+                isActive={false}
+              />
             </ul>
           </div>
         </div>
@@ -238,7 +219,12 @@ export function SupplierLayout({ children, profileComplete = true }) {
                   label="Profile"
                   isActive={pathname === "/supplier/profile"}
                 />
-                <NavItem icon={LogOut} label="Logout" onClick={handleLogout} />
+                <NavItem
+                  to="/logout"
+                  icon={LogOut}
+                  label="Logout"
+                  isActive={false}
+                />
               </ul>
             </nav>
           </div>
@@ -273,7 +259,7 @@ export function SupplierLayout({ children, profileComplete = true }) {
               <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100">
                 {userInfo?.profileImage && (
                   <img
-                    src={userInfo.profileImage || "/placeholder.svg"}
+                    src={userInfo.profileImage}
                     alt="Profile"
                     className="h-8 w-8 rounded-full object-cover"
                   />

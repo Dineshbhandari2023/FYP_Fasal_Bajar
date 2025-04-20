@@ -311,15 +311,14 @@ const supplierSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(getSupplierDetails.fulfilled, (state, { payload }) => {
+      .addCase(getSupplierDetails.fulfilled, (state, action) => {
         state.loading = false;
-        // pull only the SupplierDetail out of the userData
-        state.supplierDetails = payload.SupplierDetail;
+        state.supplierDetails = action.payload.SupplierDetail;
         state.success = true;
       })
-      .addCase(getSupplierDetails.rejected, (state, { payload }) => {
+      .addCase(getSupplierDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = payload;
+        state.error = action.payload;
       })
 
       // Register supplier
@@ -327,15 +326,15 @@ const supplierSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(registerSupplierDetails.fulfilled, (state, { payload }) => {
+      .addCase(registerSupplierDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.supplierDetails = payload; // now a real object
+        state.supplierDetails = action.payload;
         state.success = true;
         state.message = "Supplier profile registered successfully";
       })
-      .addCase(registerSupplierDetails.rejected, (state, { payload }) => {
+      .addCase(registerSupplierDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = payload;
+        state.error = action.payload;
       })
 
       // Update supplier details
@@ -343,15 +342,15 @@ const supplierSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateSupplierDetails.fulfilled, (state, { payload }) => {
+      .addCase(updateSupplierDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.supplierDetails = payload;
+        state.supplierDetails = action.payload;
         state.success = true;
         state.message = "Supplier profile updated successfully";
       })
-      .addCase(updateSupplierDetails.rejected, (state, { payload }) => {
+      .addCase(updateSupplierDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = payload;
+        state.error = action.payload;
       })
 
       // Update location

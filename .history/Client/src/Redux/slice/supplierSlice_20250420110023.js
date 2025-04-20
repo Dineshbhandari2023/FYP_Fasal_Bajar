@@ -343,15 +343,15 @@ const supplierSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateSupplierDetails.fulfilled, (state, { payload }) => {
+      .addCase(updateSupplierDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.supplierDetails = payload;
+        state.supplierDetails = action.payload;
         state.success = true;
         state.message = "Supplier profile updated successfully";
       })
-      .addCase(updateSupplierDetails.rejected, (state, { payload }) => {
+      .addCase(updateSupplierDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = payload;
+        state.error = action.payload;
       })
 
       // Update location

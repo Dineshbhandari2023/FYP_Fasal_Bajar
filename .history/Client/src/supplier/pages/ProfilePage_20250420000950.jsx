@@ -54,19 +54,17 @@ const ProfilePage = () => {
     setIsLoading(true);
     dispatch(getSupplierDetails())
       .unwrap()
-      .then((userData) => {
-        // Only fill form if they have an existing record
-        const detail = userData.SupplierDetail;
-        if (detail) {
+      .then((data) => {
+        if (data) {
           setFormData({
-            vehicleType: detail.vehicleType,
-            vehicleRegistration: detail.vehicleRegistration,
-            vehicleCapacity: detail.vehicleCapacity,
-            serviceArea: detail.serviceArea,
-            experience: detail.experience,
-            licenseNumber: detail.licenseNumber,
-            bio: detail.bio,
-            licenseDocument: detail.licenseDocument,
+            vehicleType: data.vehicleType || "",
+            vehicleRegistration: data.vehicleRegistration || "",
+            vehicleCapacity: data.vehicleCapacity || "",
+            serviceArea: data.serviceArea || "",
+            experience: data.experience || "",
+            licenseNumber: data.licenseNumber || "",
+            bio: data.bio || "",
+            licenseDocument: data.licenseDocument || "",
           });
         }
       })
@@ -188,19 +186,19 @@ const ProfilePage = () => {
   };
 
   const toggleEditMode = () => {
-    if (isEditing && supplierDetails) {
-      // reset form back to saved
-      setFormData({
-        vehicleType: supplierDetails.vehicleType,
-        vehicleRegistration: supplierDetails.vehicleRegistration,
-        vehicleCapacity: supplierDetails.vehicleCapacity,
-        serviceArea: supplierDetails.serviceArea,
-        experience: supplierDetails.experience,
-        licenseNumber: supplierDetails.licenseNumber,
-        bio: supplierDetails.bio,
-        licenseDocument: supplierDetails.licenseDocument,
-      });
-      setLicenseFile(null);
+    if (isEditing) {
+      if (supplierDetails) {
+        setFormData({
+          vehicleType: supplierDetails.vehicleType || "",
+          vehicleRegistration: supplierDetails.vehicleRegistration || "",
+          vehicleCapacity: supplierDetails.vehicleCapacity || "",
+          serviceArea: supplierDetails.serviceArea || "",
+          experience: supplierDetails.experience || "",
+          licenseNumber: supplierDetails.licenseNumber || "",
+          bio: supplierDetails.bio || "",
+          licenseDocument: supplierDetails.licenseDocument || "",
+        });
+      }
     }
     setIsEditing(!isEditing);
     setErrorMessage("");

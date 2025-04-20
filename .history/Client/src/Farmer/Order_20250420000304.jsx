@@ -6,20 +6,19 @@ import {
   fetchPendingOrderItems,
   updateOrderItemStatus,
 } from "../Redux/slice/orderSlice";
+import { toast } from "react-toastify";
 
 const Order = () => {
   const dispatch = useDispatch();
-  // Add fallback to avoid destructuring undefined
-  const {
-    pendingItems = [],
-    loading,
-    error,
-  } = useSelector((state) => state.order);
+  const { pendingItems, loading, error } = useSelector((state) => state.orders);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [dateFilter, setDateFilter] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [productFilter, setProductFilter] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   // Pagination configuration
   const resultsPerPage = 10;
@@ -82,7 +81,8 @@ const Order = () => {
             </h1>
 
             {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+              {/* Status Filter */}
               <div className="relative">
                 <select
                   value={statusFilter}
@@ -90,24 +90,16 @@ const Order = () => {
                     setStatusFilter(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="appearance-none w-full md:w-48 bg-white border border-gray-300 rounded-md py-2 px-4 pr-8 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                  className="appearance-none w-full bg-white border border-gray-300 rounded-md py-2 px-4 pr-8 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
                 >
                   <option>All Status</option>
                   <option>Pending</option>
                   <option>Accepted</option>
                   <option>Declined</option>
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg
-                    className="fill-current h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                  </svg>
-                </div>
               </div>
 
+              {/* Date Filter */}
               <div className="relative">
                 <input
                   type="text"
@@ -117,11 +109,49 @@ const Order = () => {
                     setCurrentPage(1);
                   }}
                   placeholder="dd/mm/yyyy"
-                  className="w-full md:w-48 bg-white border border-gray-300 rounded-md py-2 px-4 pr-10 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-gray-300 rounded-md py-2 px-4 pr-10 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <Calendar size={16} />
                 </div>
+              </div>
+
+              {/* Product Name Search */}
+              <div>
+                <input
+                  type="text"
+                  value={productFilter}
+                  onChange={(e) => {
+                    setProductFilter(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Search product name"
+                  className="w-full bg-white border border-gray-300 rounded-md py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              {/* Price Range */}
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={minPrice}
+                  onChange={(e) => {
+                    setMinPrice(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Min Price"
+                  className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                />
+                <input
+                  type="number"
+                  value={maxPrice}
+                  onChange={(e) => {
+                    setMaxPrice(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Max"
+                  className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                />
               </div>
             </div>
 

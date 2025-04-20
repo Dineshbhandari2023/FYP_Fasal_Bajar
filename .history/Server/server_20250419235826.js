@@ -123,7 +123,7 @@ app.use("/orders", orderRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/", paymentRoutes);
 app.use("/messages", messageRoutes);
-app.use("/api/supplier", supplierRoutes);
+app.use("/suppliers", supplierRoutes);
 
 // Error handler
 app.use(errorHandler);

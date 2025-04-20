@@ -171,22 +171,18 @@ const ProfilePage = () => {
   };
 
   const hasUnsavedChanges = () => {
-    if (!supplierDetails)
-      return formData.vehicleType || formData.vehicleRegistration;
-
+    if (!supplierDetails) return Object.values(formData).some((v) => !!v);
     return (
-      formData.vehicleType !== (supplierDetails.vehicleType || "") ||
-      formData.vehicleRegistration !==
-        (supplierDetails.vehicleRegistration || "") ||
-      formData.vehicleCapacity !== (supplierDetails.vehicleCapacity || "") ||
-      formData.serviceArea !== (supplierDetails.serviceArea || "") ||
-      formData.experience !== (supplierDetails.experience || "") ||
-      formData.licenseNumber !== (supplierDetails.licenseNumber || "") ||
-      formData.bio !== (supplierDetails.bio || "") ||
-      licenseFile !== null
+      formData.vehicleType !== supplierDetails.vehicleType ||
+      formData.vehicleRegistration !== supplierDetails.vehicleRegistration ||
+      formData.vehicleCapacity !== supplierDetails.vehicleCapacity ||
+      formData.serviceArea !== supplierDetails.serviceArea ||
+      formData.experience !== supplierDetails.experience ||
+      formData.licenseNumber !== supplierDetails.licenseNumber ||
+      formData.bio !== supplierDetails.bio ||
+      !!licenseFile
     );
   };
-
   const toggleEditMode = () => {
     if (isEditing && supplierDetails) {
       // reset form back to saved
@@ -207,15 +203,19 @@ const ProfilePage = () => {
     setSuccessMessage("");
     setValidationErrors({});
   };
+  const handleEditToggle = () => {
+    if (isEditing && hasUnsavedChanges()) {
+      setShowConfirmDialog(true);
+    } else {
+      toggleEditMode();
+    }
+  };
 
   if (isLoading) {
     return (
       <SupplierLayout>
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-t-green-600 border-gray-200 rounded-full animate-spin mx-auto"></div>
-            <p className="mt-4 text-lg">Loading profile...</p>
-          </div>
+        <div className="flex items-center justify-center h-screen">
+          <div className="animate-spin h-12 w-12 border-4 border-t-green-600 rounded-full"></div>
         </div>
       </SupplierLayout>
     );

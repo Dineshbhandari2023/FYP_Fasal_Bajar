@@ -134,6 +134,44 @@ const Order = () => {
                   <Calendar size={16} />
                 </div>
               </div>
+
+              {/* Product Name Search */}
+              <div>
+                <input
+                  type="text"
+                  value={productFilter}
+                  onChange={(e) => {
+                    setProductFilter(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Search product name"
+                  className="w-full bg-white border border-gray-300 rounded-md py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              {/* Price Range */}
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={minPrice}
+                  onChange={(e) => {
+                    setMinPrice(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Min Price"
+                  className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                />
+                <input
+                  type="number"
+                  value={maxPrice}
+                  onChange={(e) => {
+                    setMaxPrice(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Max"
+                  className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                />
+              </div>
             </div>
 
             {/* Loading and Error States */}

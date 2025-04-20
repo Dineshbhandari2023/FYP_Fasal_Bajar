@@ -207,6 +207,13 @@ const ProfilePage = () => {
     setSuccessMessage("");
     setValidationErrors({});
   };
+  const handleEditToggle = () => {
+    if (isEditing && hasUnsavedChanges()) {
+      setShowConfirmDialog(true);
+    } else {
+      toggleEditMode();
+    }
+  };
 
   if (isLoading) {
     return (
