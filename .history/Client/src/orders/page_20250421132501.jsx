@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ShoppingBag,
-  CreditCard,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMyOrders } from "../Redux/slice/orderSlice";
+import {
+  fetchMyOrders,
+  updateOrderItemStatus,
+} from "../Redux/slice/orderSlice";
 import { Navigation } from "../UI/navigation";
 import { Footer } from "../UI/footer";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
 
 const OrderPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { orders, loading, error } = useSelector((state) => state.orders);
-  const { user } = useSelector((state) => state.user);
 
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,23 +62,22 @@ const OrderPage = () => {
     }));
   };
 
-  const handlePayment = (order) => {
-    // Check if order is eligible for payment (accepted items and online payment method)
-    const hasAcceptedItems = (order.OrderItems || order.items || []).some(
-      (item) => item.status === "Accepted"
-    );
-
-    if (
-      hasAcceptedItems &&
-      order.paymentMethod === "Online Payment" &&
-      order.paymentStatus === "Pending"
-    ) {
-      // Navigate to payment page with order details
-      navigate(
-        `/payment?amount=${order.totalAmount}&orderId=${order.orderNumber}`
+  const handleUpdateStatus = async (orderId, action) => {
+    const newStatus = action === "accept" ? "Accepted" : "Declined";
+    try {
+      await dispatch(
+        updateOrderItemStatus({
+          itemId: orderId,
+          status: newStatus,
+          farmerNotes: "",
+        })
+      ).unwrap();
+      toast.success(`Order ${newStatus} successfully!`);
+    } catch (updateError) {
+      toast.error(
+        updateError.message ||
+          "Failed to update order status. Please try again."
       );
-    } else {
-      toast.error("This order is not eligible for payment at this time");
     }
   };
 
@@ -91,8 +85,6 @@ const OrderPage = () => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-
-  const isBuyer = user?.role === "Buyer";
 
   return (
     <div className="min-h-screen bg-gray-50 flex relative">
@@ -165,9 +157,6 @@ const OrderPage = () => {
                         Total
                       </th>
                       <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
-                        Payment
-                      </th>
-                      <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
                         Actions
                       </th>
                     </tr>
@@ -183,19 +172,12 @@ const OrderPage = () => {
                           0
                         );
 
-                      // Check if any items are accepted for payment
-                      const hasAcceptedItems = (
+                      // Check if any items are pending for action
+                      const hasPendingItems = (
                         order.OrderItems ||
                         order.items ||
                         []
-                      ).some((item) => item.status === "Accepted");
-
-                      // Check if payment is needed
-                      const needsPayment =
-                        isBuyer &&
-                        hasAcceptedItems &&
-                        order.paymentMethod === "Online Payment" &&
-                        order.paymentStatus === "Pending";
+                      ).some((item) => item.status === "Pending");
 
                       return (
                         <tr
@@ -224,31 +206,30 @@ const OrderPage = () => {
                             </div>
                           </td>
                           <td className="py-4 px-4 text-sm">₹{totalAmount}</td>
-                          <td className="py-4 px-4 text-sm">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs ${
-                                order.paymentStatus === "Completed"
-                                  ? "bg-green-100 text-green-800"
-                                  : order.paymentStatus === "Pending"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-red-100 text-red-800"
-                              }`}
-                            >
-                              {order.paymentStatus}
-                            </span>
-                            <div className="text-xs mt-1">
-                              {order.paymentMethod}
-                            </div>
-                          </td>
                           <td className="py-4 px-4 text-sm space-x-2">
-                            {needsPayment && (
-                              <button
-                                onClick={() => handlePayment(order)}
-                                className="px-3 py-1 rounded bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs flex items-center gap-1"
-                              >
-                                <CreditCard className="h-3 w-3" />
-                                Pay Now
-                              </button>
+                            {hasPendingItems ? (
+                              <>
+                                <button
+                                  onClick={() =>
+                                    handleUpdateStatus(order.id, "accept")
+                                  }
+                                  className="px-3 py-1 rounded bg-green-50 text-green-600 hover:bg-green-100 text-xs"
+                                >
+                                  Accept
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleUpdateStatus(order.id, "decline")
+                                  }
+                                  className="px-3 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100 text-xs"
+                                >
+                                  Decline
+                                </button>
+                              </>
+                            ) : (
+                              <span className="text-xs text-gray-500">
+                                {order.status}
+                              </span>
                             )}
                             <button
                               onClick={() => toggleOrderExpansion(order.id)}
@@ -293,7 +274,16 @@ const OrderPage = () => {
                 </div>
               )}
 
-              {/* Expanded Order Items */}
+              {/* Expanded Delivered Items */}
+              {/* {Object.entries(expandedOrders).map(([orderId, isOpen]) => {
+                if (!isOpen) return null;
+                const order = orders.find((o) => o.id.toString() === orderId);
+                if (!order) return null;
+
+                const deliveredItems =
+                  order.items?.filter(
+                    (item) => item.status.toLowerCase() === "delivered"
+                  ) || []; */}
               {Object.entries(expandedOrders).map(([orderId, isOpen]) => {
                 if (!isOpen) return null;
                 const order = orders.find((o) => o.id.toString() === orderId);

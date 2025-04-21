@@ -26,7 +26,6 @@ import {
   ChevronRight,
   Map,
 } from "lucide-react";
-import axios from "axios";
 
 export default function DeliveriesPage() {
   const dispatch = useDispatch();
@@ -172,7 +171,7 @@ export default function DeliveriesPage() {
 
     dispatch(updateDeliveryStatus(statusUpdateData))
       .unwrap()
-      .then((updatedDelivery) => {
+      .then(() => {
         setStatusUpdateModal(false);
         setStatusUpdateData({
           deliveryId: null,
@@ -180,29 +179,6 @@ export default function DeliveriesPage() {
           notes: "",
           proofOfDelivery: null,
         });
-
-        // If delivery is marked as delivered, update the order item status too
-        if (
-          statusUpdateData.status === "Delivered" &&
-          selectedDelivery?.OrderItem?.id
-        ) {
-          // Make API call to update order item status
-          const token =
-            localStorage.getItem("accessToken") ||
-            JSON.parse(localStorage.getItem("user"))?.token;
-          if (token) {
-            axios
-              .patch(
-                `http://localhost:8000/api/orders/items/${selectedDelivery.OrderItem.id}/status`,
-                { status: "Delivered" },
-                { headers: { Authorization: `Bearer ${token}` } }
-              )
-              .catch((error) => {
-                console.error("Failed to update order item status:", error);
-              });
-          }
-        }
-
         // Refresh deliveries after status update
         loadDeliveries();
       })
@@ -515,7 +491,7 @@ export default function DeliveriesPage() {
                                   // src={
                                   //   delivery.OrderItem.Product.image ||
                                   //   "/placeholder.svg"
-                                  //  || "/placeholder.svg"}
+                                  // }
                                   // alt={delivery.OrderItem.Product.productName}
                                   // className="h-12 w-12 object-cover rounded-md"
                                   src={`http://localhost:8000/${Product.image}`}
@@ -533,38 +509,6 @@ export default function DeliveriesPage() {
                                 </p>
                               </div>
                             </div>
-                          </div>
-                        )}
-
-                        {delivery.status === "Delivered" && (
-                          <div className="p-4 border-t bg-green-50">
-                            <div className="flex items-center gap-2">
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                              <h5 className="text-sm font-medium text-green-800">
-                                Delivered Successfully
-                              </h5>
-                            </div>
-                            {delivery.deliveredAt && (
-                              <p className="text-sm text-green-700 mt-1">
-                                Delivered on{" "}
-                                {new Date(
-                                  delivery.deliveredAt
-                                ).toLocaleString()}
-                              </p>
-                            )}
-                            {delivery.proofOfDelivery && (
-                              <div className="mt-2">
-                                <a
-                                  href={`http://localhost:8000/${delivery.proofOfDelivery}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-xs text-blue-600 flex items-center"
-                                >
-                                  <Camera className="h-3 w-3 mr-1" />
-                                  View proof of delivery
-                                </a>
-                              </div>
-                            )}
                           </div>
                         )}
 

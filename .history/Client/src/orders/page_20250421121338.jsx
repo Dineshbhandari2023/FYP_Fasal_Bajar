@@ -1,23 +1,18 @@
-import { useEffect, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ShoppingBag,
-  CreditCard,
-} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Calendar, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMyOrders } from "../Redux/slice/orderSlice";
+import {
+  fetchMyOrders,
+  updateOrderItemStatus,
+} from "../Redux/slice/orderSlice";
 import { Navigation } from "../UI/navigation";
 import { Footer } from "../UI/footer";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
 
 const OrderPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { orders, loading, error } = useSelector((state) => state.orders);
-  const { user } = useSelector((state) => state.user);
 
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,19 +34,9 @@ const OrderPage = () => {
   const filteredOrders =
     activeTab === "all"
       ? orders
-      : orders.filter((order) => {
-          // For non-"all" tabs, check if any order items have the matching status
-          if (order.OrderItems) {
-            return order.OrderItems.some(
-              (item) => item.status.toLowerCase() === activeTab.toLowerCase()
-            );
-          } else if (order.items) {
-            return order.items.some(
-              (item) => item.status.toLowerCase() === activeTab.toLowerCase()
-            );
-          }
-          return order.status.toLowerCase() === activeTab.toLowerCase();
-        });
+      : orders.filter(
+          (order) => order.status.toLowerCase() === activeTab.toLowerCase()
+        );
 
   const resultsPerPage = 10;
   const totalPages = Math.ceil(filteredOrders.length / resultsPerPage);
@@ -67,23 +52,22 @@ const OrderPage = () => {
     }));
   };
 
-  const handlePayment = (order) => {
-    // Check if order is eligible for payment (accepted items and online payment method)
-    const hasAcceptedItems = (order.OrderItems || order.items || []).some(
-      (item) => item.status === "Accepted"
-    );
-
-    if (
-      hasAcceptedItems &&
-      order.paymentMethod === "Online Payment" &&
-      order.paymentStatus === "Pending"
-    ) {
-      // Navigate to payment page with order details
-      navigate(
-        `/payment?amount=${order.totalAmount}&orderId=${order.orderNumber}`
+  const handleUpdateStatus = async (orderId, action) => {
+    const newStatus = action === "accept" ? "Accepted" : "Declined";
+    try {
+      await dispatch(
+        updateOrderItemStatus({
+          itemId: orderId,
+          status: newStatus,
+          farmerNotes: "",
+        })
+      ).unwrap();
+      toast.success(`Order ${newStatus} successfully!`);
+    } catch (updateError) {
+      toast.error(
+        updateError.message ||
+          "Failed to update order status. Please try again."
       );
-    } else {
-      toast.error("This order is not eligible for payment at this time");
     }
   };
 
@@ -91,8 +75,6 @@ const OrderPage = () => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-
-  const isBuyer = user?.role === "Buyer";
 
   return (
     <div className="min-h-screen bg-gray-50 flex relative">
@@ -165,103 +147,63 @@ const OrderPage = () => {
                         Total
                       </th>
                       <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
-                        Payment
-                      </th>
-                      <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {paginatedOrders.map((order) => {
-                      // Calculate total amount from order items
-                      const totalAmount =
-                        order.totalAmount ||
-                        (order.OrderItems || order.items || []).reduce(
-                          (sum, item) =>
-                            sum + (item.subtotal || item.price * item.quantity),
-                          0
-                        );
-
-                      // Check if any items are accepted for payment
-                      const hasAcceptedItems = (
-                        order.OrderItems ||
-                        order.items ||
-                        []
-                      ).some((item) => item.status === "Accepted");
-
-                      // Check if payment is needed
-                      const needsPayment =
-                        isBuyer &&
-                        hasAcceptedItems &&
-                        order.paymentMethod === "Online Payment" &&
-                        order.paymentStatus === "Pending";
-
-                      return (
-                        <tr
-                          key={order.id}
-                          className="border-b border-gray-200 hover:bg-gray-50"
-                        >
-                          <td className="py-4 px-4 text-sm text-blue-600">
-                            {order.orderNumber || order.id}
-                          </td>
-                          <td className="py-4 px-4 text-sm">
-                            {formatDate(order.createdAt)}
-                          </td>
-                          <td className="py-4 px-4 text-sm">
-                            <div className="flex flex-col gap-1">
-                              <span>
-                                {order.status.charAt(0).toUpperCase() +
-                                  order.status.slice(1)}
-                              </span>
-                              {(order.OrderItems || order.items || []).some(
-                                (item) => item.status === "Delivered"
-                              ) && (
-                                <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full inline-block w-fit">
-                                  Some items delivered
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="py-4 px-4 text-sm">₹{totalAmount}</td>
-                          <td className="py-4 px-4 text-sm">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs ${
-                                order.paymentStatus === "Completed"
-                                  ? "bg-green-100 text-green-800"
-                                  : order.paymentStatus === "Pending"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-red-100 text-red-800"
-                              }`}
-                            >
-                              {order.paymentStatus}
-                            </span>
-                            <div className="text-xs mt-1">
-                              {order.paymentMethod}
-                            </div>
-                          </td>
-                          <td className="py-4 px-4 text-sm space-x-2">
-                            {needsPayment && (
+                    {paginatedOrders.map((order) => (
+                      <tr
+                        key={order.id}
+                        className="border-b border-gray-200 hover:bg-gray-50"
+                      >
+                        <td className="py-4 px-4 text-sm text-blue-600">
+                          {order.orderNumber || order.id}
+                        </td>
+                        <td className="py-4 px-4 text-sm">
+                          {formatDate(order.createdAt)}
+                        </td>
+                        <td className="py-4 px-4 text-sm">
+                          {order.status.charAt(0).toUpperCase() +
+                            order.status.slice(1)}
+                        </td>
+                        <td className="py-4 px-4 text-sm">₹{order.total}</td>
+                        <td className="py-4 px-4 text-sm space-x-2">
+                          {order.status.toLowerCase() === "pending" ? (
+                            <>
                               <button
-                                onClick={() => handlePayment(order)}
-                                className="px-3 py-1 rounded bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs flex items-center gap-1"
+                                onClick={() =>
+                                  handleUpdateStatus(order.id, "accept")
+                                }
+                                className="px-3 py-1 rounded bg-green-50 text-green-600 hover:bg-green-100 text-xs"
                               >
-                                <CreditCard className="h-3 w-3" />
-                                Pay Now
+                                Accept
                               </button>
-                            )}
-                            <button
-                              onClick={() => toggleOrderExpansion(order.id)}
-                              className="ml-2 text-xs text-gray-600 hover:text-gray-800"
-                            >
-                              {expandedOrders[order.id]
-                                ? "Hide Details"
-                                : "View Details"}
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                              <button
+                                onClick={() =>
+                                  handleUpdateStatus(order.id, "decline")
+                                }
+                                className="px-3 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100 text-xs"
+                              >
+                                Decline
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-xs text-gray-500">
+                              {order.status}
+                            </span>
+                          )}
+                          <button
+                            onClick={() => toggleOrderExpansion(order.id)}
+                            className="ml-2 text-xs text-gray-600 hover:text-gray-800"
+                          >
+                            {expandedOrders[order.id]
+                              ? "Hide Details"
+                              : "View Details"}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -293,23 +235,28 @@ const OrderPage = () => {
                 </div>
               )}
 
-              {/* Expanded Order Items */}
+              {/* Expanded Delivered Items */}
+              {/* {Object.entries(expandedOrders).map(([orderId, isOpen]) => {
+                if (!isOpen) return null;
+                const order = orders.find((o) => o.id.toString() === orderId);
+                if (!order) return null;
+
+                const deliveredItems =
+                  order.items?.filter(
+                    (item) => item.status.toLowerCase() === "delivered"
+                  ) || []; */}
               {Object.entries(expandedOrders).map(([orderId, isOpen]) => {
                 if (!isOpen) return null;
                 const order = orders.find((o) => o.id.toString() === orderId);
                 if (!order) return null;
 
-                // Get the items from either OrderItems or items array
-                const orderItems = order.OrderItems || order.items || [];
-
-                // Filter items based on active tab if not "all"
+                // Show all items if you're on the "all" tab, otherwise filter by that tab's status
                 const itemsToShow =
-                  activeTab === "all"
-                    ? orderItems
-                    : orderItems.filter(
-                        (item) =>
-                          item.status.toLowerCase() === activeTab.toLowerCase()
-                      );
+                  order.items?.filter((item) =>
+                    activeTab === "all"
+                      ? true
+                      : item.status.toLowerCase() === activeTab
+                  ) || [];
 
                 return (
                   <div
@@ -346,24 +293,9 @@ const OrderPage = () => {
                               {item.quantity} {item.Product?.unit} × ₹
                               {item.price}
                             </p>
-                            <div className="mt-1">
-                              <span
-                                className={`text-xs px-2 py-1 rounded-full ${
-                                  item.status === "Delivered"
-                                    ? "bg-green-100 text-green-800"
-                                    : item.status === "Accepted"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : item.status === "Declined"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-yellow-100 text-yellow-800"
-                                }`}
-                              >
-                                {item.status}
-                              </span>
-                            </div>
                           </div>
                           <div className="ml-auto font-medium text-gray-900">
-                            ₹{item.subtotal || item.quantity * item.price}
+                            ₹{item.subtotal}
                           </div>
                         </div>
                       ))

@@ -26,7 +26,6 @@ import {
   ChevronRight,
   Map,
 } from "lucide-react";
-import axios from "axios";
 
 export default function DeliveriesPage() {
   const dispatch = useDispatch();
@@ -172,7 +171,7 @@ export default function DeliveriesPage() {
 
     dispatch(updateDeliveryStatus(statusUpdateData))
       .unwrap()
-      .then((updatedDelivery) => {
+      .then(() => {
         setStatusUpdateModal(false);
         setStatusUpdateData({
           deliveryId: null,
@@ -180,29 +179,6 @@ export default function DeliveriesPage() {
           notes: "",
           proofOfDelivery: null,
         });
-
-        // If delivery is marked as delivered, update the order item status too
-        if (
-          statusUpdateData.status === "Delivered" &&
-          selectedDelivery?.OrderItem?.id
-        ) {
-          // Make API call to update order item status
-          const token =
-            localStorage.getItem("accessToken") ||
-            JSON.parse(localStorage.getItem("user"))?.token;
-          if (token) {
-            axios
-              .patch(
-                `http://localhost:8000/api/orders/items/${selectedDelivery.OrderItem.id}/status`,
-                { status: "Delivered" },
-                { headers: { Authorization: `Bearer ${token}` } }
-              )
-              .catch((error) => {
-                console.error("Failed to update order item status:", error);
-              });
-          }
-        }
-
         // Refresh deliveries after status update
         loadDeliveries();
       })
@@ -378,207 +354,171 @@ export default function DeliveriesPage() {
             ) : filteredDeliveries.length > 0 ? (
               <div className="space-y-6">
                 {/* {filteredDeliveries.map((delivery) => { */}
-                {filteredDeliveries
-                  .filter((d) => d.OrderItem)
-                  .map((delivery) => {
-                    const { OrderItem } = delivery;
-                    const { Order, Product, farmer } = OrderItem;
-                    const buyer = Order?.buyer;
-                    const StatusIcon =
-                      statusConfig[delivery.status]?.icon || Package;
+                {filteredDeliveries.map((delivery) => {
+                  const { OrderItem } = delivery;
+                  const { Order, Product, farmer } = OrderItem;
+                  const buyer = Order?.buyer;
+                  const StatusIcon =
+                    statusConfig[delivery.status]?.icon || Package;
 
-                    return (
-                      <div
-                        key={delivery.id}
-                        className="border rounded-lg overflow-hidden"
-                      >
-                        <div className="bg-gray-50 p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`p-2 rounded-full ${
+                  return (
+                    <div
+                      key={delivery.id}
+                      className="border rounded-lg overflow-hidden"
+                    >
+                      <div className="bg-gray-50 p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`p-2 rounded-full ${
+                              statusConfig[delivery.status]?.color.split(
+                                " "
+                              )[0] || "bg-gray-100"
+                            } bg-opacity-20`}
+                          >
+                            <StatusIcon
+                              className={`h-5 w-5 ${
                                 statusConfig[delivery.status]?.color.split(
                                   " "
-                                )[0] || "bg-gray-100"
-                              } bg-opacity-20`}
-                            >
-                              <StatusIcon
-                                className={`h-5 w-5 ${
-                                  statusConfig[delivery.status]?.color.split(
-                                    " "
-                                  )[1] || "text-gray-800"
-                                }`}
-                              />
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-medium">
-                                  {delivery.deliveryNumber}
-                                </h4>
-                                <span
-                                  className={`text-xs px-2 py-1 rounded-full ${
-                                    statusConfig[delivery.status]?.color ||
-                                    "bg-gray-100 text-gray-800"
-                                  }`}
-                                >
-                                  {statusConfig[delivery.status]?.label ||
-                                    delivery.status}
-                                </span>
-                              </div>
-                              <p className="text-sm text-gray-500">
-                                Order: {Order?.orderNumber || "-"}
-                              </p>
-                            </div>
+                                )[1] || "text-gray-800"
+                              }`}
+                            />
                           </div>
-                          <div className="flex flex-wrap gap-2 text-sm">
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-4 w-4 text-gray-400" />
-                              <span className="text-gray-500">
-                                Pickup:
-                              </span>{" "}
-                              {formatDate(delivery.estimatedPickupTime)}
-                            </div>
-                            <div className="ml-4 flex items-center gap-1">
-                              <Calendar className="h-4 w-4 text-gray-400" />
-                              <span className="text-gray-500">
-                                Delivery:
-                              </span>{" "}
-                              {formatDate(delivery.estimatedDeliveryTime)}
-                            </div>
-                            {!["Delivered", "Failed", "Cancelled"].includes(
-                              delivery.status
-                            ) && (
-                              <button
-                                onClick={() => handleStatusUpdate(delivery)}
-                                className="ml-4 px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
-                              >
-                                Update Status
-                              </button>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="border rounded-md p-3">
-                            <h5 className="text-sm font-medium mb-2 flex items-center gap-1">
-                              <MapPin className="h-4 w-4 text-green-600" />
-                              Farmer
-                            </h5>
-                            <p className="text-sm font-medium">
-                              {delivery.OrderItem?.farmer?.username || "N/A"}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {delivery.OrderItem?.farmer?.location || "N/A"}
-                            </p>
-                            {delivery.OrderItem?.farmer?.contact_number && (
-                              <a
-                                href={`tel:${delivery.OrderItem.farmer.contact_number}`}
-                                className="mt-2 inline-flex items-center text-xs text-blue-600"
-                              >
-                                <Phone className="h-3 w-3 mr-1" />
-                                {delivery.OrderItem.farmer.contact_number}
-                              </a>
-                            )}
-                          </div>
-
-                          <div className="border rounded-md p-3">
-                            <h5 className="text-sm font-medium mb-2 flex items-center gap-1">
-                              <MapPin className="h-4 w-4 text-blue-600" />
-                              Buyer
-                            </h5>
-                            <p className="text-sm font-medium">
-                              {buyer?.username || "N/A"}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {buyer?.location || "N/A"}
-                            </p>
-                            {buyer?.contact_number && (
-                              <a
-                                href={`tel:${buyer.contact_number}`}
-                                className="mt-2 inline-flex items-center text-xs text-blue-600"
-                              >
-                                <Phone className="h-3 w-3 mr-1" />
-                                {buyer.contact_number}
-                              </a>
-                            )}
-                          </div>
-                        </div>
-
-                        {delivery.OrderItem?.Product && (
-                          <div className="p-4 border-t">
-                            <h5 className="text-sm font-medium mb-2 flex items-center gap-1">
-                              <Package className="h-4 w-4 text-gray-600" />
-                              Product Details
-                            </h5>
-                            <div className="flex items-center gap-3">
-                              {delivery.OrderItem.Product.image && (
-                                <img
-                                  // src={
-                                  //   delivery.OrderItem.Product.image ||
-                                  //   "/placeholder.svg"
-                                  //  || "/placeholder.svg"}
-                                  // alt={delivery.OrderItem.Product.productName}
-                                  // className="h-12 w-12 object-cover rounded-md"
-                                  src={`http://localhost:8000/${Product.image}`}
-                                  alt={Product.productName}
-                                  className="h-12 w-12 object-cover rounded-md"
-                                />
-                              )}
-                              <div>
-                                <p className="text-sm font-medium">
-                                  {delivery.OrderItem.Product.productName}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  Quantity: {delivery.OrderItem.quantity} × Rs
-                                  {delivery.OrderItem.price}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {delivery.status === "Delivered" && (
-                          <div className="p-4 border-t bg-green-50">
+                          <div>
                             <div className="flex items-center gap-2">
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                              <h5 className="text-sm font-medium text-green-800">
-                                Delivered Successfully
-                              </h5>
+                              <h4 className="font-medium">
+                                {delivery.deliveryNumber}
+                              </h4>
+                              <span
+                                className={`text-xs px-2 py-1 rounded-full ${
+                                  statusConfig[delivery.status]?.color ||
+                                  "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {statusConfig[delivery.status]?.label ||
+                                  delivery.status}
+                              </span>
                             </div>
-                            {delivery.deliveredAt && (
-                              <p className="text-sm text-green-700 mt-1">
-                                Delivered on{" "}
-                                {new Date(
-                                  delivery.deliveredAt
-                                ).toLocaleString()}
-                              </p>
-                            )}
-                            {delivery.proofOfDelivery && (
-                              <div className="mt-2">
-                                <a
-                                  href={`http://localhost:8000/${delivery.proofOfDelivery}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-xs text-blue-600 flex items-center"
-                                >
-                                  <Camera className="h-3 w-3 mr-1" />
-                                  View proof of delivery
-                                </a>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {delivery.notes && (
-                          <div className="p-4 border-t bg-gray-50">
-                            <h5 className="text-sm font-medium mb-1">Notes</h5>
-                            <p className="text-sm text-gray-600">
-                              {delivery.notes}
+                            <p className="text-sm text-gray-500">
+                              Order: {Order?.orderNumber || "-"}
                             </p>
                           </div>
-                        )}
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-sm">
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-4 w-4 text-gray-400" />
+                            <span className="text-gray-500">Pickup:</span>{" "}
+                            {formatDate(delivery.estimatedPickupTime)}
+                          </div>
+                          <div className="ml-4 flex items-center gap-1">
+                            <Calendar className="h-4 w-4 text-gray-400" />
+                            <span className="text-gray-500">
+                              Delivery:
+                            </span>{" "}
+                            {formatDate(delivery.estimatedDeliveryTime)}
+                          </div>
+                          {!["Delivered", "Failed", "Cancelled"].includes(
+                            delivery.status
+                          ) && (
+                            <button
+                              onClick={() => handleStatusUpdate(delivery)}
+                              className="ml-4 px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
+                            >
+                              Update Status
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    );
-                  })}
+
+                      <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="border rounded-md p-3">
+                          <h5 className="text-sm font-medium mb-2 flex items-center gap-1">
+                            <MapPin className="h-4 w-4 text-green-600" />
+                            Farmer
+                          </h5>
+                          <p className="text-sm font-medium">
+                            {delivery.OrderItem?.farmer?.username || "N/A"}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {delivery.OrderItem?.farmer?.location || "N/A"}
+                          </p>
+                          {delivery.OrderItem?.farmer?.contact_number && (
+                            <a
+                              href={`tel:${delivery.OrderItem.farmer.contact_number}`}
+                              className="mt-2 inline-flex items-center text-xs text-blue-600"
+                            >
+                              <Phone className="h-3 w-3 mr-1" />
+                              {delivery.OrderItem.farmer.contact_number}
+                            </a>
+                          )}
+                        </div>
+
+                        <div className="border rounded-md p-3">
+                          <h5 className="text-sm font-medium mb-2 flex items-center gap-1">
+                            <MapPin className="h-4 w-4 text-blue-600" />
+                            Buyer
+                          </h5>
+                          <p className="text-sm font-medium">
+                            {buyer?.username || "N/A"}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {buyer?.location || "N/A"}
+                          </p>
+                          {buyer?.contact_number && (
+                            <a
+                              href={`tel:${buyer.contact_number}`}
+                              className="mt-2 inline-flex items-center text-xs text-blue-600"
+                            >
+                              <Phone className="h-3 w-3 mr-1" />
+                              {buyer.contact_number}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      {delivery.OrderItem?.Product && (
+                        <div className="p-4 border-t">
+                          <h5 className="text-sm font-medium mb-2 flex items-center gap-1">
+                            <Package className="h-4 w-4 text-gray-600" />
+                            Product Details
+                          </h5>
+                          <div className="flex items-center gap-3">
+                            {delivery.OrderItem.Product.image && (
+                              <img
+                                // src={
+                                //   delivery.OrderItem.Product.image ||
+                                //   "/placeholder.svg"
+                                // }
+                                // alt={delivery.OrderItem.Product.productName}
+                                // className="h-12 w-12 object-cover rounded-md"
+                                src={`http://localhost:8000/${Product.image}`}
+                                alt={Product.productName}
+                                className="h-12 w-12 object-cover rounded-md"
+                              />
+                            )}
+                            <div>
+                              <p className="text-sm font-medium">
+                                {delivery.OrderItem.Product.productName}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Quantity: {delivery.OrderItem.quantity} × NPR
+                                {delivery.OrderItem.price}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {delivery.notes && (
+                        <div className="p-4 border-t bg-gray-50">
+                          <h5 className="text-sm font-medium mb-1">Notes</h5>
+                          <p className="text-sm text-gray-600">
+                            {delivery.notes}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center py-8">

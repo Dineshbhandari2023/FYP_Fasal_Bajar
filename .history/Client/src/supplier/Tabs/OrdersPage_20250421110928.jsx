@@ -6,7 +6,7 @@ import {
   getAvailableDeliveries,
   acceptDelivery,
 } from "../../Redux/slice/supplierSlice";
-import { SupplierLayout } from "../SupplierLayout";
+import { SupplierLayout } from "./SupplierLayout";
 import { useNavigate } from "react-router-dom";
 import {
   Package,
@@ -232,10 +232,7 @@ export default function SupplierOrdersPage() {
                       <div className="flex items-start gap-3 mb-4">
                         {d.product.image ? (
                           <img
-                            src={
-                              `http://localhost:8000/${d.product.image}` ||
-                              "/placeholder.svg"
-                            }
+                            src={d.product.image || "/placeholder.svg"}
                             alt={d.itemName}
                             className="w-16 h-16 object-cover rounded-md border"
                           />
@@ -255,12 +252,6 @@ export default function SupplierOrdersPage() {
                               <DollarSign className="h-3 w-3" /> ₹{d.subtotal}
                             </span>
                           </div>
-                          {d.status === "Delivered" && (
-                            <div className="mt-2 text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full inline-flex items-center">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Delivered
-                            </div>
-                          )}
                         </div>
                       </div>
 
