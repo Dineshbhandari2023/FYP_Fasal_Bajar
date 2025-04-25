@@ -84,25 +84,6 @@ function RouteLayer({ pickupLocation, deliveryLocation, currentLocation }) {
   const map = useMap();
   const routingControlRef = useRef(null);
 
-  // Add CSS to hide routing machine UI elements
-  useEffect(() => {
-    // Add CSS to hide routing machine UI elements
-    const style = document.createElement("style");
-    style.textContent = `
-      .display-none {
-        display: none !important;
-      }
-      .leaflet-routing-container {
-        display: none !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
   useEffect(() => {
     if (!map || !pickupLocation || !deliveryLocation) return;
 
@@ -131,7 +112,7 @@ function RouteLayer({ pickupLocation, deliveryLocation, currentLocation }) {
         routeWhileDragging: false,
         showAlternatives: false,
         fitSelectedRoutes: false,
-        show: false,
+        show: false, // Don't show turn-by-turn instructions
         lineOptions: {
           styles: [
             { color: "blue", opacity: 0.6, weight: 4 },
@@ -141,22 +122,6 @@ function RouteLayer({ pickupLocation, deliveryLocation, currentLocation }) {
         createMarker: () => {
           return null; // Don't create markers for waypoints (we'll use our own)
         },
-        // Hide the itinerary and waypoint panels
-        collapsible: true,
-        collapsed: true,
-        // Completely hide the control container
-        containerClassName: "display-none",
-        // Disable all UI elements
-        addWaypoints: false,
-        draggableWaypoints: false,
-        waypointMode: "connect",
-        useZoomParameter: false,
-        autoRoute: true,
-        // Add a custom formatter that returns empty strings for all instructions
-        formatter: new L.Routing.Formatter({
-          getIconHTML: () => "",
-          formatInstruction: () => "",
-        }),
       }).addTo(map);
     } catch (error) {
       console.error("Error creating routing control:", error);
@@ -407,7 +372,7 @@ export default function SupplierMapPage() {
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h1 className="text-3xl font-bold tracking-tight">Map View</h1>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex gap-2">
               <button
                 className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 inline-flex items-center gap-2"
                 onClick={centerOnCurrentLocation}
@@ -436,7 +401,7 @@ export default function SupplierMapPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Map View */}
             <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border">
-              <div className="p-4 sm:p-6 border-b">
+              <div className="p-6 border-b">
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-lg font-medium">Delivery Map</h2>
@@ -446,9 +411,9 @@ export default function SupplierMapPage() {
                   </div>
                 </div>
 
-                <div className="flex mt-4 border-b overflow-x-auto">
+                <div className="flex mt-4 border-b">
                   <button
-                    className={`px-4 py-2 text-sm font-medium whitespace-nowrap ${
+                    className={`px-4 py-2 text-sm font-medium ${
                       activeTab === "current"
                         ? "border-b-2 border-green-600 text-green-600"
                         : "text-gray-500"
@@ -458,7 +423,7 @@ export default function SupplierMapPage() {
                     Current Delivery
                   </button>
                   <button
-                    className={`px-4 py-2 text-sm font-medium whitespace-nowrap ${
+                    className={`px-4 py-2 text-sm font-medium ${
                       activeTab === "all"
                         ? "border-b-2 border-green-600 text-green-600"
                         : "text-gray-500"
@@ -468,7 +433,7 @@ export default function SupplierMapPage() {
                     All Active Orders
                   </button>
                   <button
-                    className={`px-4 py-2 text-sm font-medium whitespace-nowrap ${
+                    className={`px-4 py-2 text-sm font-medium ${
                       activeTab === "optimize"
                         ? "border-b-2 border-green-600 text-green-600"
                         : "text-gray-500"
@@ -479,11 +444,11 @@ export default function SupplierMapPage() {
                   </button>
                 </div>
               </div>
-              <div className="p-4 sm:p-6">
+              <div className="p-6">
                 <div
                   ref={mapRef}
-                  className="relative w-full overflow-hidden rounded-lg border"
-                  style={{ height: "calc(50vh - 100px)", minHeight: "300px" }}
+                  className="relative aspect-video w-full overflow-hidden rounded-lg border"
+                  style={{ height: "400px" }}
                 >
                   {!isLoaded ? (
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
@@ -579,7 +544,7 @@ export default function SupplierMapPage() {
                   )}
                 </div>
 
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="p-3 border rounded-lg">
                     <div className="text-sm font-medium text-gray-500">
                       Estimated Time
@@ -659,14 +624,14 @@ export default function SupplierMapPage() {
 
             {/* Deliveries List */}
             <div className="bg-white rounded-lg shadow-sm border">
-              <div className="p-4 sm:p-6 border-b">
+              <div className="p-6 border-b">
                 <h2 className="text-lg font-medium">Active Deliveries</h2>
                 <p className="text-sm text-gray-500">
                   Select a delivery to view on map
                 </p>
               </div>
               <div className="p-4">
-                <div className="space-y-3 max-h-[calc(50vh-100px)] overflow-y-auto">
+                <div className="space-y-3">
                   {activeDeliveries.length > 0 ? (
                     activeDeliveries.map((delivery) => (
                       <div

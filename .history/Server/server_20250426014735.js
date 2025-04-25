@@ -90,11 +90,6 @@ app.set("io", io);
 const messageSocket = setupMessageSocket(io);
 app.set("messageSocket", messageSocket);
 
-const setupSupplierLocationSocket = require("./Sockets/Handlers/supplierLocationSockets");
-
-const locationSocket = setupSupplierLocationSocket(io);
-app.set("locationSocket", locationSocket);
-
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
@@ -137,7 +132,7 @@ const paymentRoutes = require("./Routes/paymentRoutes");
 const reviewRoutes = require("./Routes/reviewRoutes");
 const messageRoutes = require("./Routes/messageRoutes");
 const supplierRoutes = require("./Routes/supplierRoutes");
-const supplierLocationRoutes = require("./Routes/supplierLocationRoutes");
+const setupSupplierLocationSocket = require("./Sockets/Handlers/supplierLocationSockets");
 
 // Mount routers
 app.use("/users", usersRoutes);
@@ -147,7 +142,6 @@ app.use("/reviews", reviewRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/messages", messageRoutes);
 app.use("/api/supplier", supplierRoutes);
-app.use("/api/supplier/location", supplierLocationRoutes);
 
 // Error handler
 app.use(errorHandler);

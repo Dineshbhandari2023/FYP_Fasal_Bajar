@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SupplierLayout } from "../SupplierLayout";
@@ -14,7 +16,7 @@ import {
 import {
   getAllSuppliers,
   getActiveDeliveries,
-} from "../../Redux/slice/supplierSlice";
+} from "../Redux/slice/supplierSlice";
 import RealTimeLocationTracker from "./RealTimeLocationTracker";
 import {
   MapContainer,

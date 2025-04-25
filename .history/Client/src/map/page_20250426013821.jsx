@@ -791,12 +791,12 @@ const Map = () => {
                     >
                       View Profile
                     </Link>
-                    {/* <button
+                    <button
                       className="px-3 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors text-xs sm:text-sm flex items-center justify-center"
                       onClick={() => handleContactEntity(supplier, "supplier")}
                     >
                       Contact Supplier
-                    </button> */}
+                    </button>
                   </div>
                 </div>
               </div>

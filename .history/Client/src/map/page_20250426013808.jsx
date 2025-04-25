@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
@@ -17,7 +19,7 @@ import Navigation from "../UI/navigation";
 import { fetchFarmers } from "../Redux/slice/userSlice";
 import { getAllSuppliers } from "../Redux/slice/supplierSlice";
 import { Link } from "react-router-dom";
-import locationService from "./webSocketLocationService";
+import locationService from "./WebSocketLocationService";
 
 // Set your server's base URL
 const SERVER_URL = "http://localhost:8000";
@@ -791,12 +793,12 @@ const Map = () => {
                     >
                       View Profile
                     </Link>
-                    {/* <button
+                    <button
                       className="px-3 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors text-xs sm:text-sm flex items-center justify-center"
                       onClick={() => handleContactEntity(supplier, "supplier")}
                     >
                       Contact Supplier
-                    </button> */}
+                    </button>
                   </div>
                 </div>
               </div>

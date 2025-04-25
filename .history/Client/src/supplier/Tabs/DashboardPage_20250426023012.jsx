@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SupplierLayout } from "../SupplierLayout";
 import { Truck, Package, Calendar, Clock, Navigation } from "lucide-react";
-import { getActiveDeliveries } from "../../Redux/slice/supplierSlice";
+import { getActiveDeliveries } from "../Redux/slice/supplierSlice";
 import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";

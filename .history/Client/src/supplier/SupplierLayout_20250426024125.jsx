@@ -262,14 +262,14 @@ export function SupplierLayout({ children, profileComplete = true }) {
               </button>
             </div>
             <div className="flex items-center gap-4">
-              {/* <div className="relative">
+              <div className="relative">
                 <button className="p-2 rounded-full hover:bg-gray-100 relative">
                   <Bell className="h-5 w-5" />
                   <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs text-white">
                     3
                   </span>
                 </button>
-              </div> */}
+              </div>
               <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100">
                 {userInfo?.profileImage && (
                   <img
