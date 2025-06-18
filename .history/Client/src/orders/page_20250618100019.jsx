@@ -130,9 +130,7 @@ const OrderPage = () => {
         }
 
         const response = await axios.post(
-          `${import.meta.env.BACKEND_BASE_URL}/orders/${encodeURIComponent(
-            orderId
-          )}/payment`,
+          `http://localhost:8000/orders/${encodeURIComponent(orderId)}/payment`,
           {},
           {
             headers: { Authorization: `Bearer ${token}` },
