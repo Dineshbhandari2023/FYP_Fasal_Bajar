@@ -193,9 +193,7 @@ export default function DeliveriesPage() {
           if (token) {
             axios
               .patch(
-                `${import.meta.env.BACKEND_BASE_URL}/api/orders/items/${
-                  selectedDelivery.OrderItem.id
-                }/status`,
+                `http://localhost:8000/api/orders/items/${selectedDelivery.OrderItem.id}/status`,
                 { status: "Delivered" },
                 { headers: { Authorization: `Bearer ${token}` } }
               )
@@ -520,9 +518,7 @@ export default function DeliveriesPage() {
                                   //  || "/placeholder.svg"}
                                   // alt={delivery.OrderItem.Product.productName}
                                   // className="h-12 w-12 object-cover rounded-md"
-                                  src={`${import.meta.env.BACKEND_BASE_URL}/${
-                                    Product.image
-                                  }`}
+                                  src={`http://localhost:8000/${Product.image}`}
                                   alt={Product.productName}
                                   className="h-12 w-12 object-cover rounded-md"
                                 />
@@ -559,9 +555,7 @@ export default function DeliveriesPage() {
                             {delivery.proofOfDelivery && (
                               <div className="mt-2">
                                 <a
-                                  href={`${import.meta.env.BACKEND_BASE_URL}/${
-                                    delivery.proofOfDelivery
-                                  }`}
+                                  href={`http://localhost:8000/${delivery.proofOfDelivery}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-xs text-blue-600 flex items-center"

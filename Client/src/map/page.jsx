@@ -27,7 +27,7 @@ import { Link } from "react-router-dom";
 import locationService from "./webSocketLocationService";
 
 // Use environment variable for server URL
-const SERVER_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+const SERVER_URL = "http://localhost:8000";
 
 // Fix for default marker icon in react-leaflet
 delete L.Icon.Default.prototype._getIconUrl;

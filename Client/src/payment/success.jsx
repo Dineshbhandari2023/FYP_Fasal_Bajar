@@ -16,7 +16,7 @@ const Success = () => {
         try {
           const token = localStorage.getItem("accessToken");
           const response = await axios.post(
-            `${import.meta.env.BACKEND_BASE_URL}/api/payments/check-status`,
+            "http://localhost:8000/api/payments/check-status",
             { productId },
             {
               headers: { Authorization: `Bearer ${token}` },

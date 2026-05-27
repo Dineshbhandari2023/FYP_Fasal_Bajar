@@ -33,16 +33,13 @@ const ResetPassword = () => {
 
     try {
       // First, verify the reset code
-      await axios.post(
-        `${import.meta.env.BACKEND_BASE_URL}/users/verify-reset-code`,
-        {
-          resetCode: formData.resetCode,
-        }
-      );
+      await axios.post("http://localhost:8000/users/verify-reset-code", {
+        resetCode: formData.resetCode,
+      });
 
       // If verification is successful, proceed to reset the password
       const response = await axios.post(
-        `${import.meta.env.BACKEND_BASE_URL}/users/reset-password`,
+        "http://localhost:8000/users/reset-password",
         {
           resetCode: formData.resetCode,
           newPassword: formData.newPassword,

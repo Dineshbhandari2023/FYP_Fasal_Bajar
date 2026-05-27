@@ -1,4 +1,4 @@
-const backEndDomain = `${import.meta.env.BACKEND_BASE_URL}`;
+const backEndDomain = "http://localhost:8000";
 
 const ApiLink = {
   // User-related endpoints (note the /users prefix)

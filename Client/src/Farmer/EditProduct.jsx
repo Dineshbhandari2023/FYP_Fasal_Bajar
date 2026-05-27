@@ -108,7 +108,7 @@ const EditProduct = ({ product, isOpen, onClose, onSave }) => {
             <div className="mb-4">
               <label className="block mb-1">Current Image</label>
               <img
-                src={`${import.meta.env.BACKEND_BASE_URL}/${product.image}`}
+                src={`http://localhost:8000/${product.image}`}
                 alt={product.productName}
                 className="w-32 h-32 object-cover rounded"
               />

@@ -8,7 +8,7 @@ import Navigation from "../UI/navigation";
 import { StartChatButton } from "../chat/startChatButton";
 
 // Set your server's base URL
-const SERVER_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+const SERVER_URL = "http://localhost:8000";
 
 const SupplierProfilePage = () => {
   const { id: supplierId } = useParams();

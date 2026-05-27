@@ -273,9 +273,7 @@ export function SupplierLayout({ children, profileComplete = true }) {
                   <img
                     src={
                       userInfo.profileImage
-                        ? `${import.meta.env.BACKEND_BASE_URL}${
-                            userInfo.profileImage
-                          }`
+                        ? `http://localhost:8000${userInfo.profileImage}`
                         : "/placeholder.svg"
                     }
                     alt="Profile"

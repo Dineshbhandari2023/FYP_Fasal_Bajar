@@ -2,7 +2,7 @@ import io from "socket.io-client";
 import { addNewMessage } from "../Redux/slice/messageSlice";
 import store from "../Redux/Store/store";
 
-const SERVER_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+const SERVER_URL = "http://localhost:8000";
 let socket = null;
 
 // Initialize socket connection

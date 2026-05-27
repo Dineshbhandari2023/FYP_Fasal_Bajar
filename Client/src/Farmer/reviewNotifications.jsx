@@ -9,6 +9,72 @@ const ReviewNotifications = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const { userInfo, accessToken } = useSelector((state) => state.user);
 
+  //   useEffect(() => {
+  //     if (!userInfo || !accessToken) return;
+
+  //     // If the user is a Farmer, join their review room via socketService
+  //     if (userInfo.role === "Farmer") {
+  //       socketService.joinFarmerReviewRoom(userInfo.id);
+  //     }
+
+  //     // Use the main socket connection from socketService for direct notifications
+  //     const mainSocket = socketService.socket;
+  //     if (!mainSocket) return;
+
+  //     const handleReviewSubmitted = (data) => {
+  //       const newNotification = {
+  //         id: Date.now(),
+  //         type: "review_submitted",
+  //         message: "Your review was submitted successfully",
+  //         details: data.review,
+  //         read: false,
+  //         time: new Date(),
+  //       };
+  //       setNotifications((prev) => [newNotification, ...prev]);
+  //       setUnreadCount((prev) => prev + 1);
+  //     };
+
+  //     const handleReviewUpdated = (data) => {
+  //       const newNotification = {
+  //         id: Date.now(),
+  //         type: "review_updated",
+  //         message: "Your review was updated successfully",
+  //         details: data.review,
+  //         read: false,
+  //         time: new Date(),
+  //       };
+  //       setNotifications((prev) => [newNotification, ...prev]);
+  //       setUnreadCount((prev) => prev + 1);
+  //     };
+
+  //     const handleReviewDeleted = (data) => {
+  //       const newNotification = {
+  //         id: Date.now(),
+  //         type: "review_deleted",
+  //         message: "Your review was deleted successfully",
+  //         details: { reviewId: data.reviewId },
+  //         read: false,
+  //         time: new Date(),
+  //       };
+  //       setNotifications((prev) => [newNotification, ...prev]);
+  //       setUnreadCount((prev) => prev + 1);
+  //     };
+
+  //     mainSocket.on("review_submitted", handleReviewSubmitted);
+  //     mainSocket.on("review_updated", handleReviewUpdated);
+  //     mainSocket.on("review_deleted", handleReviewDeleted);
+
+  //     // Cleanup listeners on unmount
+  //     return () => {
+  //       mainSocket.off("review_submitted", handleReviewSubmitted);
+  //       mainSocket.off("review_updated", handleReviewUpdated);
+  //       mainSocket.off("review_deleted", handleReviewDeleted);
+  //       if (userInfo.role === "Farmer") {
+  //         socketService.leaveFarmerReviewRoom(userInfo.id);
+  //       }
+  //     };
+  //   }, [userInfo, accessToken]);
+  // Inside ReviewNotifications component’s useEffect:
   useEffect(() => {
     if (!userInfo || !accessToken) return;
 

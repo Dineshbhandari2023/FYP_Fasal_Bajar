@@ -6,7 +6,7 @@ import { fetchCurrentUser, updateUser } from "../Redux/slice/userSlice";
 import { User, Phone, MapPin, Mail, Camera, Edit, Save } from "lucide-react";
 
 // Set your server's base URL (ensure REACT_APP_SERVER_URL is defined in your .env file if needed)
-const SERVER_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+const SERVER_URL = "http://localhost:8000";
 
 export default function ProfilePage() {
   const dispatch = useDispatch();

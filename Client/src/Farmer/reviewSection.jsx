@@ -19,7 +19,7 @@ const ReviewsSection = () => {
   const [sortBy, setSortBy] = useState("recent");
   const [filterRating, setFilterRating] = useState(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const SERVER_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+  const SERVER_URL = "http://localhost:8000";
 
   // Fetch reviews when component mounts
   useEffect(() => {

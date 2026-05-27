@@ -23,7 +23,7 @@ const RecentReviews = () => {
   const [expanded, setExpanded] = useState(false);
 
   // Server URL
-  const SERVER_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+  const SERVER_URL = "http://localhost:8000";
 
   useEffect(() => {
     if (!userInfo || !accessToken) return;

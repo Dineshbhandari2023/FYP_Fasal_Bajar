@@ -129,9 +129,7 @@ export default function CartPage() {
                     >
                       <div className="h-20 w-20 rounded-md overflow-hidden">
                         <img
-                          src={`${import.meta.env.BACKEND_BASE_URL}/${
-                            item.image
-                          }`}
+                          src={`http://localhost:8000/${item.image}`}
                           alt={item.productName}
                           className="h-full w-full object-cover"
                         />

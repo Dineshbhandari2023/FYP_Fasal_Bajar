@@ -16,7 +16,7 @@ class SocketService {
     this.store = store;
 
     const token = localStorage.getItem("accessToken");
-    const serverUrl = `${import.meta.env.BACKEND_BASE_URL}`;
+    const serverUrl = "http://localhost:8000";
 
     const socketOptions = {
       auth: { token },

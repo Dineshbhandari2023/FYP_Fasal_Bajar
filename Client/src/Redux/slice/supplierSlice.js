@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Get API URL from environment variable
-const API_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+const API_URL = "http://localhost:8000";
 
 // Get auth token from localStorage
 const getAuthToken = () => {

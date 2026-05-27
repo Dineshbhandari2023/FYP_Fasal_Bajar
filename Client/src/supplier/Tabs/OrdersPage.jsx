@@ -233,9 +233,8 @@ export default function SupplierOrdersPage() {
                         {d.product.image ? (
                           <img
                             src={
-                              `${import.meta.env.BACKEND_BASE_URL}/${
-                                d.product.image
-                              }` || "/placeholder.svg"
+                              `http://localhost:8000/${d.product.image}` ||
+                              "/placeholder.svg"
                             }
                             alt={d.itemName}
                             className="w-16 h-16 object-cover rounded-md border"

@@ -105,9 +105,7 @@ const ProductList = () => {
                 <td className="px-4 py-2 border">
                   {product.image ? (
                     <img
-                      src={`${import.meta.env.BACKEND_BASE_URL}/${
-                        product.image
-                      }`}
+                      src={`http://localhost:8000/${product.image}`}
                       alt={product.productName}
                       className="w-16 h-16 object-cover mx-auto"
                     />

@@ -46,7 +46,7 @@ const OrderPage = () => {
         try {
           const token = localStorage.getItem("accessToken");
           await axios.post(
-            `${import.meta.env.BACKEND_BASE_URL}/payment/check-status`,
+            "http://localhost:8000/payment/check-status",
             { productId },
             {
               headers: { Authorization: `Bearer ${token}` },
@@ -130,9 +130,7 @@ const OrderPage = () => {
         }
 
         const response = await axios.post(
-          `${import.meta.env.BACKEND_BASE_URL}/orders/${encodeURIComponent(
-            orderId
-          )}/payment`,
+          `http://localhost:8000/orders/${encodeURIComponent(orderId)}/payment`,
           {},
           {
             headers: { Authorization: `Bearer ${token}` },

@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "./axiosInstance";
 
+// Set up Axios with default configuration
+// axios.defaults.baseURL = "http://localhost:8000";
+// axios.defaults.withCredentials = true;
+
 const initialState = {
   products: [],
   loading: false,

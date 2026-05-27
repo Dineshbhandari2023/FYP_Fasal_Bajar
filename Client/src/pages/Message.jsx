@@ -378,9 +378,7 @@ const Message = () => {
                 <div className="relative">
                   {otherUser.profileImage ? (
                     <img
-                      src={`${import.meta.env.BACKEND_BASE_URL}${
-                        otherUser.profileImage
-                      }`}
+                      src={`http://localhost:8000${otherUser.profileImage}`}
                       alt={otherUser.username}
                       className="w-12 h-12 rounded-full object-cover"
                     />
@@ -456,9 +454,7 @@ const Message = () => {
                     <div className="relative">
                       {otherUser.profileImage ? (
                         <img
-                          src={`${import.meta.env.BACKEND_BASE_URL}${
-                            otherUser.profileImage
-                          }`}
+                          src={`http://localhost:8000${otherUser.profileImage}`}
                           alt={otherUser.username}
                           className="w-10 h-10 rounded-full object-cover"
                         />

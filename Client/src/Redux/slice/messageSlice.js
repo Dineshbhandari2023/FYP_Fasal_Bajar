@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Define the API base URL
-const API_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+const API_URL = "http://localhost:8000";
 
 // Create an axios instance with default config
 const api = axios.create({

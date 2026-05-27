@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 // Set your server's base URL. You can also set REACT_APP_SERVER_URL in your .env file.
-const SERVER_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+const SERVER_URL = "http://localhost:8000";
 
 const Settings = () => {
   const dispatch = useDispatch();

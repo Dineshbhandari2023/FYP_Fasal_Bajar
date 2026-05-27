@@ -111,9 +111,7 @@ export function MessageList({
               <div className="relative">
                 {otherPerson?.profileImage ? (
                   <img
-                    src={`${import.meta.env.BACKEND_BASE_URL}${
-                      otherPerson.profileImage
-                    }`}
+                    src={`http://localhost:8000${otherPerson.profileImage}`}
                     alt={otherPerson.username}
                     className="w-12 h-12 rounded-full object-cover"
                   />

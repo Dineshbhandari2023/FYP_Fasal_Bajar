@@ -29,7 +29,7 @@ export default function BrowsePage() {
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
-  const apiBaseUrl = `${import.meta.env.BACKEND_BASE_URL}`;
+  const apiBaseUrl = "http://localhost:8000";
 
   useEffect(() => {
     dispatch(fetchProducts());

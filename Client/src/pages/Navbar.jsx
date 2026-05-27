@@ -5,7 +5,7 @@ import { fetchCurrentUser } from "../Redux/slice/userSlice";
 import ReviewNotifications from "../Farmer/reviewNotifications";
 
 // Set your server's base URL (ensure this variable is defined in your .env if needed)
-const SERVER_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+const SERVER_URL = "http://localhost:8000";
 
 const Navbar = ({ onMenuClick }) => {
   const dispatch = useDispatch();

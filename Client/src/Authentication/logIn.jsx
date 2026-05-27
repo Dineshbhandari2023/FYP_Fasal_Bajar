@@ -218,7 +218,7 @@ const Login = () => {
       }
 
       const response = await axios.post(
-        `${import.meta.env.BACKEND_BASE_URL}/users/forgot-password`,
+        "http://localhost:8000/users/forgot-password",
         {
           email: forgotEmail,
         }

@@ -8,7 +8,7 @@ export function FeaturedCrops() {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.products);
 
-  const apiBaseUrl = `${import.meta.env.BACKEND_BASE_URL}`;
+  const apiBaseUrl = "http://localhost:8000";
 
   useEffect(() => {
     dispatch(fetchProducts());

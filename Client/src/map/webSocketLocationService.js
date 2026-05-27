@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const SERVER_URL = `${import.meta.env.BACKEND_BASE_URL}`;
+const SERVER_URL = "http://localhost:8000";
 
 class WebSocketLocationService {
   constructor() {
